@@ -45,10 +45,13 @@ export default function GenerateBookingLink() {
     }
 
     const token = `BKL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Get the base URL and path for the application
     const baseUrl = window.location.origin;
-    const basePath = import.meta.env.BASE_URL || '/';
+    const basePath = window.location.pathname.replace(/\/$/, ''); // Remove trailing slash
+    
     // For HashRouter, we need to include the hash (#) before the route
-    const link = `${baseUrl}${basePath}#/customer/login?token=${token}`;
+    const link = `${baseUrl}${basePath}/#/customer/login?token=${token}`;
     
     setGeneratedLink(link);
     
