@@ -35,7 +35,7 @@ import { useAuth } from '../context/AuthContext';
 export default function RegistrationDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, hasPermission } = useAuth();
+  const { hasPermission } = useAuth();
   const toast = useToast();
   const { isOpen: isFeeModalOpen, onOpen: onFeeModalOpen, onClose: onFeeModalClose } = useDisclosure();
   const { isOpen: isTokenModalOpen, onOpen: onTokenModalOpen, onClose: onTokenModalClose } = useDisclosure();

@@ -8,6 +8,8 @@ import {
   HStack,
   VStack,
   Input,
+  InputGroup,
+  InputLeftElement,
   Select,
   Table,
   Thead,
@@ -82,12 +84,16 @@ export default function BookingList() {
       <Card>
         <CardBody>
           <HStack mb={4} spacing={4}>
-            <Input
-              placeholder="Search by name, mobile, plot number, or booking ID..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              leftIcon={<FiSearch />}
-            />
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <FiSearch />
+              </InputLeftElement>
+              <Input
+                placeholder="Search by name, mobile, plot number, or booking ID..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </InputGroup>
             <Select
               placeholder="All Status"
               value={statusFilter}
