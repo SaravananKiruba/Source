@@ -21,10 +21,13 @@ export default function CustomerDashboard() {
   const { customer, logout } = useCustomerAuth();
   const navigate = useNavigate();
 
-  // In real app, filter by customer email
-  const customerBookings = mockBookings.filter(b => 
-    b.email === customer?.email || b.email === 'rajesh.kumar@email.com'
-  );
+  // Get bookings from localStorage and mockData
+  const savedBookings = JSON.parse(localStorage.getItem('customerBookings') || '[]');
+  const savedPayments = JSON.parse(localStorage.getItem('customerPayments') || '[]');
+  const customerBookings = [
+    ...mockBookings.filter(b => b.email === customer?.email || b.email === 'rajesh.kumar@email.com'),
+    ...savedBookings.filter((b: any) => b.email === customer?.email)
+  ];
 
   const handleLogout = () => {
     logout();
@@ -42,7 +45,7 @@ export default function CustomerDashboard() {
               <Text fontSize="sm" fontWeight="bold">{customer?.name}</Text>
               <Text fontSize="xs" color="gray.600">{customer?.email}</Text>
             </VStack>
-            <Button size="sm" onClick={handleLogout}>Logout</Button>
+            <Button size="sm" colorScheme="red" variant="outline" onClick={handleLogout}>Logout</Button>
           </HStack>
         </Flex>
       </Box>
@@ -96,7 +99,8 @@ export default function CustomerDashboard() {
               ) : (
                 <VStack align="stretch" spacing={4}>
                   {customerBookings.map(booking => {
-                    const payment = mockPayments.find(p => p.bookingId === booking.id);
+                    const payment = mockPayments.find(p => p.bookingId === booking.id) 
+                      || savedPayments.find((p: any) => p.bookingId === booking.id);
                     
                     return (
                       <Card key={booking.id} variant="outline">

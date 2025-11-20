@@ -61,6 +61,29 @@ export default function CustomerBookingForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const bookingId = `BK${Date.now().toString().slice(-3)}`;
+    
+    // Create booking object
+    const booking = {
+      id: bookingId,
+      customerName: formData.customerName,
+      email: formData.email,
+      mobile: formData.mobile,
+      address: formData.address,
+      modeOfPurchase: formData.modeOfPurchase,
+      project: formData.project,
+      layout: formData.layout,
+      plotNumber: formData.plotNumber,
+      area: formData.area,
+      totalCost: Math.floor(Math.random() * 5000000) + 2000000, // Mock total cost
+      bookingDate: new Date().toISOString(),
+      status: 'Booked - Pending Payment',
+    };
+    
+    // Save to localStorage
+    const existingBookings = JSON.parse(localStorage.getItem('customerBookings') || '[]');
+    existingBookings.push(booking);
+    localStorage.setItem('customerBookings', JSON.stringify(existingBookings));
+    
     toast({
       title: 'Booking submitted successfully!',
       description: `Your booking ID is ${bookingId}. Please proceed to payment.`,
@@ -89,7 +112,7 @@ export default function CustomerBookingForm() {
               <Text fontSize="sm" fontWeight="bold">{customer?.name}</Text>
               <Text fontSize="xs" color="gray.600">{customer?.email}</Text>
             </VStack>
-            <Button size="sm" onClick={handleLogout}>Logout</Button>
+            <Button size="sm" colorScheme="red" variant="outline" onClick={handleLogout}>Logout</Button>
           </HStack>
         </Flex>
       </Box>

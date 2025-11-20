@@ -29,7 +29,9 @@ export default function CustomerPayment() {
   const [processing, setProcessing] = useState(false);
   const [paymentComplete, setPaymentComplete] = useState(false);
   
-  const booking = mockBookings.find(b => b.id === id);
+  // Get booking from localStorage or mockData
+  const savedBookings = JSON.parse(localStorage.getItem('customerBookings') || '[]');
+  const booking = mockBookings.find(b => b.id === id) || savedBookings.find((b: any) => b.id === id);
   const advanceAmount = booking ? booking.totalCost * 0.1 : 0;
 
   useEffect(() => {
@@ -58,6 +60,27 @@ export default function CustomerPayment() {
       // Simulate successful payment
       setProcessing(false);
       setPaymentComplete(true);
+      
+      // Update booking status in localStorage
+      const savedBookings = JSON.parse(localStorage.getItem('customerBookings') || '[]');
+      const updatedBookings = savedBookings.map((b: any) => 
+        b.id === id ? { ...b, status: 'Booked - Payment Confirmed' } : b
+      );
+      localStorage.setItem('customerBookings', JSON.stringify(updatedBookings));
+      
+      // Save payment record
+      const payment = {
+        id: `PAY-${Date.now()}`,
+        bookingId: id,
+        receiptNumber: `RCP-${Date.now()}`,
+        amount: advanceAmount,
+        paymentDate: new Date().toISOString(),
+        paymentMode: 'Razorpay',
+        status: 'Completed'
+      };
+      const savedPayments = JSON.parse(localStorage.getItem('customerPayments') || '[]');
+      savedPayments.push(payment);
+      localStorage.setItem('customerPayments', JSON.stringify(savedPayments));
       
       toast({
         title: 'Payment successful!',
@@ -94,7 +117,7 @@ export default function CustomerPayment() {
               <Text fontSize="sm" fontWeight="bold">{customer?.name}</Text>
               <Text fontSize="xs" color="gray.600">{customer?.email}</Text>
             </VStack>
-            <Button size="sm" onClick={handleLogout}>Logout</Button>
+            <Button size="sm" colorScheme="red" variant="outline" onClick={handleLogout}>Logout</Button>
           </HStack>
         </Flex>
       </Box>

@@ -72,7 +72,11 @@ export default function CustomerLogin() {
               leftIcon={<Icon as={FcGoogle} boxSize={6} />}
               onClick={handleGoogleLogin}
               variant="outline"
-              _hover={{ bg: 'gray.50' }}
+              borderColor="gray.300"
+              bg="white"
+              color="gray.700"
+              fontWeight="semibold"
+              _hover={{ bg: 'gray.50', borderColor: 'gray.400' }}
             >
               Continue with Google
             </Button>
