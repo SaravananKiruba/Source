@@ -28,7 +28,7 @@ export default function Sidebar() {
 
   return (
     <Box w="250px" bg="blue.700" color="white" p={4} overflowY="auto">
-      <Text fontSize="2xl" fontWeight="bold" mb={8} textAlign="center">
+      <Text fontSize="2xl" fontWeight="bold" mb={8} textAlign="center" color="white">
         ABI Estates
       </Text>
       
@@ -46,15 +46,16 @@ export default function Sidebar() {
                 bg={isActive ? 'blue.600' : 'transparent'}
                 _hover={{ bg: 'blue.600' }}
                 transition="all 0.2s"
+                color="white"
               >
-                <Icon as={item.icon} mr={3} />
-                <Text>{item.label}</Text>
+                <Icon as={item.icon} mr={3} color="white" />
+                <Text color="white">{item.label}</Text>
               </Flex>
             </Link>
           );
         })}
 
-        <Divider my={4} />
+        <Divider my={4} borderColor="whiteAlpha.300" />
 
         <Text fontSize="xs" fontWeight="bold" px={3} mb={2} color="blue.200">
           CUSTOMER PORTAL
@@ -74,9 +75,10 @@ export default function Sidebar() {
                 bg={isActive ? 'blue.600' : 'transparent'}
                 _hover={{ bg: 'blue.600' }}
                 transition="all 0.2s"
+                color="white"
               >
-                <Icon as={item.icon} mr={3} />
-                <Text fontSize="sm">{item.label}</Text>
+                <Icon as={item.icon} mr={3} color="white" />
+                <Text fontSize="sm" color="white">{item.label}</Text>
               </Flex>
             </Link>
           );
