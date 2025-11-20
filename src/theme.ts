@@ -23,8 +23,100 @@ const theme = extendTheme({
   },
   styles: {
     global: {
-      body: {
+      'html, body': {
         bg: 'gray.50',
+        color: 'gray.800',
+      },
+    },
+  },
+  components: {
+    Card: {
+      baseStyle: {
+        container: {
+          bg: 'white',
+          color: 'gray.800',
+        },
+      },
+    },
+    Text: {
+      baseStyle: {
+        color: 'gray.800',
+      },
+    },
+    Heading: {
+      baseStyle: {
+        color: 'gray.800',
+      },
+    },
+    FormLabel: {
+      baseStyle: {
+        color: 'gray.700',
+        fontWeight: 'medium',
+      },
+    },
+    Input: {
+      variants: {
+        outline: {
+          field: {
+            bg: 'white',
+            borderColor: 'gray.300',
+            color: 'gray.800',
+            _placeholder: {
+              color: 'gray.400',
+            },
+            _hover: {
+              borderColor: 'gray.400',
+            },
+            _focus: {
+              borderColor: 'blue.500',
+              boxShadow: '0 0 0 1px #3182ce',
+            },
+          },
+        },
+      },
+    },
+    Select: {
+      variants: {
+        outline: {
+          field: {
+            bg: 'white',
+            borderColor: 'gray.300',
+            color: 'gray.800',
+            _hover: {
+              borderColor: 'gray.400',
+            },
+            _focus: {
+              borderColor: 'blue.500',
+              boxShadow: '0 0 0 1px #3182ce',
+            },
+          },
+        },
+      },
+    },
+    Stat: {
+      baseStyle: {
+        label: {
+          color: 'gray.600',
+        },
+        number: {
+          color: 'gray.800',
+        },
+        helpText: {
+          color: 'gray.500',
+        },
+      },
+    },
+    Table: {
+      variants: {
+        simple: {
+          th: {
+            color: 'gray.700',
+            fontWeight: 'semibold',
+          },
+          td: {
+            color: 'gray.800',
+          },
+        },
       },
     },
   },
