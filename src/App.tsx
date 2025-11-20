@@ -1,21 +1,32 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import Login from './pages/Login';
-import Layout from './components/Layout';
-import Dashboard from './pages/Dashboard';
-import BookingList from './pages/BookingList';
-import BookingForm from './pages/BookingForm';
-import BookingDetails from './pages/BookingDetails';
-import PaymentForm from './pages/PaymentForm';
-import RegistrationList from './pages/RegistrationList';
-import RegistrationForm from './pages/RegistrationForm';
-import RegistrationDetails from './pages/RegistrationDetails';
-import SlotManagement from './pages/SlotManagement';
-import AuditLogs from './pages/AuditLogs';
+import { CustomerAuthProvider, useCustomerAuth } from './context/CustomerAuthContext';
+import Login from './pages/Login.tsx';
+import Layout from './components/Layout.tsx';
+import Dashboard from './pages/Dashboard.tsx';
+import BookingList from './pages/BookingList.tsx';
+import BookingForm from './pages/BookingForm.tsx';
+import BookingDetails from './pages/BookingDetails.tsx';
+import PaymentForm from './pages/PaymentForm.tsx';
+import RegistrationList from './pages/RegistrationList.tsx';
+import RegistrationForm from './pages/RegistrationForm.tsx';
+import RegistrationDetails from './pages/RegistrationDetails.tsx';
+import SlotManagement from './pages/SlotManagement.tsx';
+import AuditLogs from './pages/AuditLogs.tsx';
+import GenerateBookingLink from './pages/GenerateBookingLink.tsx';
+import CustomerLogin from './pages/customer/CustomerLogin.tsx';
+import CustomerDashboard from './pages/customer/CustomerDashboard.tsx';
+import CustomerBookingForm from './pages/customer/CustomerBookingForm.tsx';
+import CustomerPayment from './pages/customer/CustomerPayment.tsx';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
   return user ? <>{children}</> : <Navigate to="/login" />;
+};
+
+const CustomerProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { customer } = useCustomerAuth();
+  return customer ? <>{children}</> : <Navigate to="/customer/login" />;
 };
 
 function AppRoutes() {
@@ -23,6 +34,7 @@ function AppRoutes() {
 
   return (
     <Routes>
+      {/* Staff Routes */}
       <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
       <Route
         path="/"
@@ -42,7 +54,31 @@ function AppRoutes() {
         <Route path="registrations/:id" element={<RegistrationDetails />} />
         <Route path="slots" element={<SlotManagement />} />
         <Route path="audit-logs" element={<AuditLogs />} />
+        <Route path="generate-link" element={<GenerateBookingLink />} />
       </Route>
+
+      {/* Customer Routes */}
+      <Route path="/customer/login" element={<CustomerLogin />} />
+      <Route path="/customer/dashboard" element={
+        <CustomerProtectedRoute>
+          <CustomerDashboard />
+        </CustomerProtectedRoute>
+      } />
+      <Route path="/customer/booking" element={
+        <CustomerProtectedRoute>
+          <CustomerBookingForm />
+        </CustomerProtectedRoute>
+      } />
+      <Route path="/customer/booking/:id" element={
+        <CustomerProtectedRoute>
+          <CustomerDashboard />
+        </CustomerProtectedRoute>
+      } />
+      <Route path="/customer/payment/:id" element={
+        <CustomerProtectedRoute>
+          <CustomerPayment />
+        </CustomerProtectedRoute>
+      } />
     </Routes>
   );
 }
@@ -51,7 +87,9 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRoutes />
+        <CustomerAuthProvider>
+          <AppRoutes />
+        </CustomerAuthProvider>
       </AuthProvider>
     </BrowserRouter>
   );
