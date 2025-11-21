@@ -12,10 +12,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const mockCredentials = {
   'admin@abiestates.com': { password: 'admin123', user: { id: 'U001', email: 'admin@abiestates.com', name: 'Admin User', role: 'Admin' as const } },
-  'sales@abiestates.com': { password: 'sales123', user: { id: 'U002', email: 'sales@abiestates.com', name: 'Sales Executive', role: 'Sales' as const } },
-  'accounts@abiestates.com': { password: 'accounts123', user: { id: 'U003', email: 'accounts@abiestates.com', name: 'Accounts Manager', role: 'Accounts' as const } },
-  'legal@abiestates.com': { password: 'legal123', user: { id: 'U004', email: 'legal@abiestates.com', name: 'Legal Advisor', role: 'Legal' as const } },
-  'logistics@abiestates.com': { password: 'logistics123', user: { id: 'U005', email: 'logistics@abiestates.com', name: 'Logistics Officer', role: 'Logistics' as const } },
+  'finance@abiestates.com': { password: 'finance123', user: { id: 'U002', email: 'finance@abiestates.com', name: 'Finance Manager', role: 'Finance' as const } },
+  'businessowner@abiestates.com': { password: 'owner123', user: { id: 'U003', email: 'businessowner@abiestates.com', name: 'Business Owner', role: 'BusinessOwner' as const } },
+  'crm@abiestates.com': { password: 'crm123', user: { id: 'U004', email: 'crm@abiestates.com', name: 'CRM Executive', role: 'CRM' as const } },
+  'sales@abiestates.com': { password: 'sales123', user: { id: 'U005', email: 'sales@abiestates.com', name: 'Sales Executive', role: 'Sales' as const } },
+  'legal@abiestates.com': { password: 'legal123', user: { id: 'U006', email: 'legal@abiestates.com', name: 'Legal Advisor', role: 'Legal' as const } },
+  'hr@abiestates.com': { password: 'hr123', user: { id: 'U007', email: 'hr@abiestates.com', name: 'HR Manager', role: 'HR' as const } },
+  'user@abiestates.com': { password: 'user123', user: { id: 'U008', email: 'user@abiestates.com', name: 'General User', role: 'User' as const } },
 };
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -44,13 +47,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (user.role === 'Admin') return true;
 
     const permissions: Record<string, string[]> = {
-      'create-booking': ['Sales', 'Admin'],
-      'view-bookings': ['Sales', 'Accounts', 'Legal', 'Admin', 'Management'],
-      'confirm-payment': ['Accounts', 'Admin'],
-      'create-registration': ['Sales', 'Admin'],
+      'create-order': ['Sales', 'CRM', 'Admin'],
+      'view-orders': ['Sales', 'CRM', 'Finance', 'Legal', 'Admin', 'BusinessOwner', 'User'],
+      'confirm-payment': ['Finance', 'Admin'],
+      'record-bank-payment': ['Finance', 'Admin'],
+      'send-payment-link': ['CRM', 'Admin'],
+      'manage-plots': ['CRM', 'Admin'],
+      'view-reports': ['BusinessOwner', 'Admin', 'Finance'],
+      'lock-forms': ['CRM', 'Admin'],
       'approve-registration': ['Legal', 'Admin'],
       'assign-token': ['Legal', 'Admin'],
-      'handover-documents': ['Logistics', 'Admin'],
     };
 
     return permissions[action]?.includes(user.role) || false;

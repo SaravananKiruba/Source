@@ -1,18 +1,16 @@
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CustomerAuthProvider, useCustomerAuth } from './context/CustomerAuthContext';
-import Login from './pages/Login.tsx';
+import LoginWithOTP from './pages/LoginWithOTP.tsx';
 import Layout from './components/Layout.tsx';
 import Dashboard from './pages/Dashboard.tsx';
-import BookingList from './pages/BookingList.tsx';
-import BookingForm from './pages/BookingForm.tsx';
-import BookingDetails from './pages/BookingDetails.tsx';
-import PaymentForm from './pages/PaymentForm.tsx';
-import RegistrationList from './pages/RegistrationList.tsx';
-import RegistrationForm from './pages/RegistrationForm.tsx';
-import RegistrationDetails from './pages/RegistrationDetails.tsx';
-import SlotManagement from './pages/SlotManagement.tsx';
-import AuditLogs from './pages/AuditLogs.tsx';
+import OrderList from './pages/OrderList.tsx';
+import OrderForm from './pages/OrderForm.tsx';
+import PaymentFormUpdated from './pages/PaymentFormUpdated.tsx';
+import PlotManagement from './pages/PlotManagement.tsx';
+import SendPaymentLink from './pages/SendPaymentLink.tsx';
+import BankPaymentNotification from './pages/BankPaymentNotification.tsx';
+import InProgressOrdersReport from './pages/InProgressOrdersReport.tsx';
 import GenerateBookingLink from './pages/GenerateBookingLink.tsx';
 import CustomerLogin from './pages/customer/CustomerLogin.tsx';
 import CustomerDashboard from './pages/customer/CustomerDashboard.tsx';
@@ -35,7 +33,7 @@ function AppRoutes() {
   return (
     <Routes>
       {/* Staff Routes */}
-      <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+      <Route path="/login" element={user ? <Navigate to="/" /> : <LoginWithOTP />} />
       <Route
         path="/"
         element={
@@ -45,15 +43,13 @@ function AppRoutes() {
         }
       >
         <Route index element={<Dashboard />} />
-        <Route path="bookings" element={<BookingList />} />
-        <Route path="bookings/new" element={<BookingForm />} />
-        <Route path="bookings/:id" element={<BookingDetails />} />
-        <Route path="bookings/:id/payment" element={<PaymentForm />} />
-        <Route path="registrations" element={<RegistrationList />} />
-        <Route path="registrations/new" element={<RegistrationForm />} />
-        <Route path="registrations/:id" element={<RegistrationDetails />} />
-        <Route path="slots" element={<SlotManagement />} />
-        <Route path="audit-logs" element={<AuditLogs />} />
+        <Route path="orders" element={<OrderList />} />
+        <Route path="orders/new" element={<OrderForm />} />
+        <Route path="orders/:id/payment" element={<PaymentFormUpdated />} />
+        <Route path="plots" element={<PlotManagement />} />
+        <Route path="send-payment-link" element={<SendPaymentLink />} />
+        <Route path="bank-payment" element={<BankPaymentNotification />} />
+        <Route path="reports/in-progress" element={<InProgressOrdersReport />} />
         <Route path="generate-link" element={<GenerateBookingLink />} />
       </Route>
 
@@ -69,7 +65,7 @@ function AppRoutes() {
           <CustomerBookingForm />
         </CustomerProtectedRoute>
       } />
-      <Route path="/customer/booking/:id" element={
+      <Route path="/customer/order/:id" element={
         <CustomerProtectedRoute>
           <CustomerDashboard />
         </CustomerProtectedRoute>

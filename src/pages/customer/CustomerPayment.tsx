@@ -18,7 +18,6 @@ import {
   Icon,
 } from '@chakra-ui/react';
 import { useCustomerAuth } from '../../context/CustomerAuthContext';
-import { mockBookings } from '../../data/mockData';
 import { FaCreditCard, FaCheckCircle } from 'react-icons/fa';
 
 export default function CustomerPayment() {
@@ -29,10 +28,11 @@ export default function CustomerPayment() {
   const [processing, setProcessing] = useState(false);
   const [paymentComplete, setPaymentComplete] = useState(false);
   
-  // Get booking from localStorage or mockData
-  const savedBookings = JSON.parse(localStorage.getItem('customerBookings') || '[]');
-  const booking = mockBookings.find(b => b.id === id) || savedBookings.find((b: any) => b.id === id);
-  const advanceAmount = booking ? booking.totalCost * 0.1 : 0;
+  // Get order from localStorage
+  const savedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+  const order = savedOrders.find((o: any) => o.id === id);
+  const minimumPayment = 50000;
+  const advanceAmount = order ? Math.max(order.totalCost * 0.1, minimumPayment) : minimumPayment;
 
   useEffect(() => {
     if (!customer) {
@@ -61,26 +61,29 @@ export default function CustomerPayment() {
       setProcessing(false);
       setPaymentComplete(true);
       
-      // Update booking status in localStorage
-      const savedBookings = JSON.parse(localStorage.getItem('customerBookings') || '[]');
-      const updatedBookings = savedBookings.map((b: any) => 
-        b.id === id ? { ...b, status: 'Booked - Payment Confirmed' } : b
+      // Update order status in localStorage
+      const savedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const updatedOrders = savedOrders.map((o: any) => 
+        o.id === id ? { ...o, status: 'Order - Payment Confirmed' } : o
       );
-      localStorage.setItem('customerBookings', JSON.stringify(updatedBookings));
+      localStorage.setItem('orders', JSON.stringify(updatedOrders));
       
       // Save payment record
       const payment = {
         id: `PAY-${Date.now()}`,
-        bookingId: id,
+        orderId: id,
+        customerId: order?.customerId,
         receiptNumber: `RCP-${Date.now()}`,
         amount: advanceAmount,
         paymentDate: new Date().toISOString(),
         paymentMode: 'Razorpay',
-        status: 'Completed'
+        status: 'Success',
+        isRefundable: true,
+        realizationStatus: 'Subject to Realization',
       };
-      const savedPayments = JSON.parse(localStorage.getItem('customerPayments') || '[]');
+      const savedPayments = JSON.parse(localStorage.getItem('payments') || '[]');
       savedPayments.push(payment);
-      localStorage.setItem('customerPayments', JSON.stringify(savedPayments));
+      localStorage.setItem('payments', JSON.stringify(savedPayments));
       
       toast({
         title: 'Payment successful!',
@@ -91,12 +94,12 @@ export default function CustomerPayment() {
     }, 3000);
   };
 
-  if (!booking) {
+  if (!order) {
     return (
       <Box minH="100vh" bg="gray.50" p={6}>
         <Card maxW="600px" mx="auto">
           <CardBody>
-            <Text>Booking not found</Text>
+            <Text>Order not found</Text>
             <Button mt={4} onClick={() => navigate('/customer/dashboard')}>
               Go to Dashboard
             </Button>
@@ -128,35 +131,39 @@ export default function CustomerPayment() {
             <>
               <Card>
                 <CardBody>
-                  <Heading size="md" mb={4}>Booking Advance Payment</Heading>
+                  <Heading size="md" mb={4}>Order Advance Payment</Heading>
                   
                   <Box bg="blue.50" p={4} borderRadius="md" mb={4}>
-                    <Text fontSize="sm" fontWeight="bold" mb={2}>Booking Details</Text>
+                    <Text fontSize="sm" fontWeight="bold" mb={2}>Order Details</Text>
                     <SimpleGrid columns={2} spacing={3}>
                       <Box>
-                        <Text fontSize="xs" color="gray.600">Booking ID</Text>
-                        <Text fontWeight="bold">{booking.id}</Text>
+                        <Text fontSize="xs" color="gray.600">Order ID</Text>
+                        <Text fontWeight="bold">{order.id}</Text>
+                      </Box>
+                      <Box>
+                        <Text fontSize="xs" color="gray.600">Customer ID</Text>
+                        <Text fontWeight="bold">{order.customerId}</Text>
                       </Box>
                       <Box>
                         <Text fontSize="xs" color="gray.600">Customer Name</Text>
-                        <Text fontWeight="bold">{booking.customerName}</Text>
+                        <Text fontWeight="bold">{order.buyers?.[0]?.buyerName}</Text>
                       </Box>
                       <Box>
                         <Text fontSize="xs" color="gray.600">Project</Text>
-                        <Text fontWeight="bold">{booking.project}</Text>
+                        <Text fontWeight="bold">{order.project}</Text>
                       </Box>
                       <Box>
                         <Text fontSize="xs" color="gray.600">Plot Number</Text>
-                        <Text fontWeight="bold">{booking.plotNumber}</Text>
+                        <Text fontWeight="bold">{order.plotNumber}</Text>
                       </Box>
                       <Box>
                         <Text fontSize="xs" color="gray.600">Area</Text>
-                        <Text fontWeight="bold">{booking.area} sq ft</Text>
+                        <Text fontWeight="bold">{order.area} sq ft</Text>
                       </Box>
                       <Box>
                         <Text fontSize="xs" color="gray.600">Total Cost</Text>
                         <Text fontWeight="bold" color="green.600">
-                          ₹{(booking.totalCost / 100000).toFixed(2)}L
+                          ₹{(order.totalCost / 100000).toFixed(2)}L
                         </Text>
                       </Box>
                     </SimpleGrid>
@@ -168,12 +175,8 @@ export default function CustomerPayment() {
                     <Heading size="sm" mb={3}>Payment Summary</Heading>
                     <VStack align="stretch" spacing={3}>
                       <Flex justify="space-between">
-                        <Text>Booking Advance (10%)</Text>
+                        <Text>Order Advance (Minimum ₹50,000)</Text>
                         <Text fontWeight="bold">₹{(advanceAmount / 100000).toFixed(2)}L</Text>
-                      </Flex>
-                      <Flex justify="space-between">
-                        <Text fontSize="sm" color="gray.600">GST & Other Charges</Text>
-                        <Text fontSize="sm" color="gray.600">Included</Text>
                       </Flex>
                       <Divider />
                       <Flex justify="space-between" align="center">
@@ -188,8 +191,9 @@ export default function CustomerPayment() {
                   <Box mt={6} p={4} bg="orange.50" borderRadius="md">
                     <Text fontSize="sm" fontWeight="bold" mb={1}>Payment Terms:</Text>
                     <Text fontSize="xs">
-                      • Booking advance is non-refundable<br />
+                      • Order advance is refundable<br />
                       • Receipt will be generated immediately after payment<br />
+                      • Receipt validity is subject to realization of payment<br />
                       • Balance payment as per milestone schedule<br />
                       • Our team will contact you within 24 hours
                     </Text>
@@ -277,9 +281,9 @@ export default function CustomerPayment() {
                     <Text fontSize="sm" fontWeight="bold" mb={2}>What's Next?</Text>
                     <Text fontSize="sm">
                       ✓ Payment receipt sent to your email<br />
-                      ✓ Booking confirmed with ID: {booking.id}<br />
+                      ✓ Order confirmed with ID: {order.id}<br />
                       ✓ Our team will contact you within 24 hours<br />
-                      ✓ You can track your booking in the dashboard
+                      ✓ You can track your order in the dashboard
                     </Text>
                   </Box>
 

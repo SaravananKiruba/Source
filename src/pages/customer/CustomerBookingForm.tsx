@@ -60,37 +60,57 @@ export default function CustomerBookingForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const bookingId = `BK${Date.now().toString().slice(-3)}`;
+    const orderId = `ORD${Date.now().toString().slice(-6)}`;
+    const customerId = `CUST${Date.now().toString().slice(-6)}`;
     
-    // Create booking object
-    const booking = {
-      id: bookingId,
-      customerName: formData.customerName,
-      email: formData.email,
-      mobile: formData.mobile,
-      address: formData.address,
-      modeOfPurchase: formData.modeOfPurchase,
+    // Create order object with buyer details
+    const order = {
+      id: orderId,
+      customerId: customerId,
+      orderDate: new Date().toISOString(),
       project: formData.project,
       layout: formData.layout,
       plotNumber: formData.plotNumber,
       area: formData.area,
       totalCost: Math.floor(Math.random() * 5000000) + 2000000, // Mock total cost
-      bookingDate: new Date().toISOString(),
-      status: 'Booked - Pending Payment',
+      status: 'Order - Pending Payment',
+      buyers: [
+        {
+          buyerName: formData.customerName,
+          buyerNameInTamil: '',
+          buyerType: 'Indian',
+          aadhaarNumber: '',
+          panNumber: '',
+          passportNumber: '',
+          fatherName: '',
+          fatherNameInTamil: '',
+          mobile: formData.mobile,
+          email: formData.email,
+          address: formData.address,
+          aadhaarDocument: null,
+          panDocument: null,
+          passportDocument: null,
+        }
+      ],
+      modeOfPurchase: formData.modeOfPurchase,
+      loanRequired: formData.modeOfPurchase === 'Loan',
+      isFormLocked: false,
+      lockedBy: null,
+      lockedAt: null,
     };
     
     // Save to localStorage
-    const existingBookings = JSON.parse(localStorage.getItem('customerBookings') || '[]');
-    existingBookings.push(booking);
-    localStorage.setItem('customerBookings', JSON.stringify(existingBookings));
+    const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+    existingOrders.push(order);
+    localStorage.setItem('orders', JSON.stringify(existingOrders));
     
     toast({
-      title: 'Booking submitted successfully!',
-      description: `Your booking ID is ${bookingId}. Please proceed to payment.`,
+      title: 'Order submitted successfully!',
+      description: `Your Order ID is ${orderId}. Please proceed to payment.`,
       status: 'success',
       duration: 5000,
     });
-    navigate(`/customer/payment/${bookingId}`);
+    navigate(`/customer/order/${orderId}`);
   };
 
   const projects = [
@@ -105,7 +125,7 @@ export default function CustomerBookingForm() {
     <Box minH="100vh" bg="gray.50">
       <Box bg="white" borderBottom="1px" borderColor="gray.200" px={6} py={4}>
         <Flex justify="space-between" align="center">
-          <Heading size="md" color="blue.600">ABI Estates - New Booking</Heading>
+          <Heading size="md" color="blue.600">ABI Estates - New Order</Heading>
           <HStack>
             <Avatar size="sm" name={customer?.name} src={customer?.picture} />
             <VStack align="start" spacing={0}>
@@ -122,7 +142,7 @@ export default function CustomerBookingForm() {
           <Card>
             <CardBody>
               <VStack spacing={4} align="stretch" mb={6}>
-                <Heading size="md">Create Your Booking</Heading>
+                <Heading size="md">Create Your Order</Heading>
                 <Box>
                   <Text fontSize="sm" color="gray.600" mb={2}>
                     Step {currentStep} of 3
@@ -289,8 +309,8 @@ export default function CustomerBookingForm() {
                       <Box bg="blue.50" p={4} borderRadius="md">
                         <Text fontSize="sm" fontWeight="bold" mb={2}>Next Steps:</Text>
                         <Text fontSize="sm">
-                          After submitting, you'll be redirected to make the booking advance payment.
-                          Our team will contact you within 24 hours to confirm your booking.
+                          After submitting, you'll be redirected to make the advance payment (minimum ₹50,000).
+                          Our team will contact you within 24 hours to confirm your order.
                         </Text>
                       </Box>
                     </>

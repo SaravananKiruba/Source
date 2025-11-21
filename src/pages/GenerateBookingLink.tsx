@@ -25,10 +25,10 @@ export default function GenerateBookingLink() {
   const toast = useToast();
   const { hasPermission } = useAuth();
 
-  if (!hasPermission('create-booking')) {
+  if (!hasPermission('create-order')) {
     return (
       <Box>
-        <Text>You don't have permission to generate booking links.</Text>
+        <Text>You don't have permission to generate order links.</Text>
       </Box>
     );
   }
@@ -44,7 +44,7 @@ export default function GenerateBookingLink() {
       return;
     }
 
-    const token = `BKL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const token = `ORL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
     // Get the base URL and path for the application
     const baseUrl = window.location.origin;
@@ -56,7 +56,7 @@ export default function GenerateBookingLink() {
     setGeneratedLink(link);
     
     toast({
-      title: 'Booking link generated',
+      title: 'Order link generated',
       description: 'Copy and share with customer',
       status: 'success',
       duration: 3000,
@@ -77,7 +77,7 @@ export default function GenerateBookingLink() {
     // Mock email sending
     toast({
       title: 'Email sent!',
-      description: `Booking link sent to ${customerEmail}`,
+      description: `Order link sent to ${customerEmail}`,
       status: 'success',
       duration: 3000,
     });
@@ -89,15 +89,15 @@ export default function GenerateBookingLink() {
 
   return (
     <VStack spacing={6} align="stretch">
-      <Heading size="lg">Generate Customer Booking Link</Heading>
+      <Heading size="lg">Generate Customer Order Link</Heading>
 
       <Card>
         <CardBody>
           <VStack spacing={6} align="stretch">
             <Box>
               <Text fontSize="sm" color="gray.600" mb={4}>
-                Generate a unique booking link for customers to complete their property booking online.
-                Customers will login with Google and can fill the booking form and make payments themselves.
+                Generate a unique order link for customers to complete their property order online.
+                Customers will login with Google/Mobile/Aadhaar OTP and can fill the order form and make payments themselves.
               </Text>
             </Box>
 
@@ -125,7 +125,7 @@ export default function GenerateBookingLink() {
                 
                 <Box>
                   <Text fontSize="sm" fontWeight="bold" mb={2}>
-                    Generated Booking Link:
+                    Generated Order Link:
                   </Text>
                   <InputGroup size="lg">
                     <Input
@@ -185,14 +185,15 @@ export default function GenerateBookingLink() {
                 <Box bg="orange.50" p={4} borderRadius="md">
                   <Text fontSize="xs" fontWeight="bold" mb={1}>Email Template Preview:</Text>
                   <Text fontSize="xs" color="gray.700">
-                    <strong>Subject:</strong> Complete Your Property Booking - ABI Estates<br /><br />
+                    <strong>Subject:</strong> Complete Your Property Order - ABI Estates<br /><br />
                     Dear Customer,<br /><br />
-                    Thank you for your interest in ABI Estates. Please use the link below to complete your property booking online:<br /><br />
+                    Thank you for your interest in ABI Estates. Please use the link below to complete your property order online:<br /><br />
                     <Code fontSize="xs">{generatedLink}</Code><br /><br />
                     You'll be able to:<br />
-                    • Fill in your booking details<br />
+                    • Fill in your order details and buyer information<br />
+                    • Upload required documents (Aadhaar, PAN, Passport)<br />
                     • Review property information<br />
-                    • Make advance payment securely<br /><br />
+                    • Make advance payment securely (minimum ₹50,000)<br /><br />
                     Link expires in 30 days.<br /><br />
                     Best regards,<br />
                     ABI Estates Team
